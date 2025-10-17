@@ -13,6 +13,8 @@ function createWindow() {
     height: 800,
     minWidth: 800,
     minHeight: 600,
+    frame: false, // Remove default frame
+    titleBarStyle: 'hidden', // Hide default title bar
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -21,7 +23,6 @@ function createWindow() {
       webSecurity: false
     },
     icon: path.join(__dirname, '../../public/icon.png'),
-    titleBarStyle: 'default',
     show: false
   });
 
@@ -38,6 +39,31 @@ function createWindow() {
   // Show window when ready
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+  });
+
+  // Handle page load events to prevent white screen
+  mainWindow.webContents.on('did-finish-load', () => {
+    // Wait for React to fully render
+    setTimeout(() => {
+      if (!mainWindow.isVisible()) {
+        mainWindow.show();
+      }
+    }, 200);
+  });
+
+  // Handle navigation events
+  mainWindow.webContents.on('dom-ready', () => {
+    // Ensure the window is shown after DOM is ready
+    setTimeout(() => {
+      if (!mainWindow.isVisible()) {
+        mainWindow.show();
+      }
+    }, 100);
+  });
+
+  // Prevent navigation glitches
+  mainWindow.webContents.on('will-navigate', (event) => {
+    event.preventDefault();
   });
 
   // Open DevTools in development
@@ -102,6 +128,27 @@ ipcMain.handle('clear-all-data', async (event) => {
     console.error('IPC: Error in clear-all-data:', error);
     throw error;
   }
+});
+
+// Window control handlers
+ipcMain.handle('window-minimize', () => {
+  mainWindow.minimize();
+});
+
+ipcMain.handle('window-maximize', () => {
+  if (mainWindow.isMaximized()) {
+    mainWindow.unmaximize();
+  } else {
+    mainWindow.maximize();
+  }
+});
+
+ipcMain.handle('window-close', () => {
+  mainWindow.close();
+});
+
+ipcMain.handle('window-is-maximized', () => {
+  return mainWindow.isMaximized();
 });
 
 // App event handlers

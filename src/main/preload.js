@@ -7,5 +7,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   markMealComplete: (date, mealType) => ipcRenderer.invoke('mark-meal-complete', date, mealType),
   getStats: (period, startDate) => ipcRenderer.invoke('get-stats', period, startDate),
   getDailyStats: (date) => ipcRenderer.invoke('get-daily-stats', date),
-  clearAllData: () => ipcRenderer.invoke('clear-all-data')
+  clearAllData: () => ipcRenderer.invoke('clear-all-data'),
+  // Window controls
+  minimize: () => ipcRenderer.invoke('window-minimize'),
+  maximize: () => ipcRenderer.invoke('window-maximize'),
+  close: () => ipcRenderer.invoke('window-close'),
+  isMaximized: () => ipcRenderer.invoke('window-is-maximized')
 });

@@ -5,12 +5,16 @@ import StatsDashboard from './components/StatsDashboard';
 import DateNavigator from './components/DateNavigator';
 import CalendarView from './components/CalendarView';
 import SettingsPage from './components/SettingsPage';
+import CustomTitleBar from './components/CustomTitleBar';
+import VersionDisplay from './components/VersionDisplay';
+import LoadingScreen from './components/LoadingScreen';
 
 function App() {
   const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
   const [darkMode, setDarkMode] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Apply dark mode class to document
@@ -21,14 +25,31 @@ function App() {
     }
   }, [darkMode]);
 
+  useEffect(() => {
+    // Wait for React to fully hydrate and render
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Increased to 1 second for better stability
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
 
+  // Show loading screen initially
+  if (isLoading) {
+    return <LoadingScreen darkMode={darkMode} />;
+  }
+
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
+    <div className={`min-h-screen transition-all duration-500 ease-in-out ${
       darkMode ? 'dark bg-gray-900' : 'bg-gray-50'
     }`}>
+      {/* Custom Title Bar */}
+      <CustomTitleBar darkMode={darkMode} />
+      
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -108,6 +129,9 @@ function App() {
           </div>
         )}
       </main>
+      
+      {/* Version Display */}
+      <VersionDisplay darkMode={darkMode} version="1.0.0" />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 {
   "appId": "com.mealtracker.app",
   "productName": "Meal Tracker",
+  "icon": "public/icon.png",
   "directories": {
     "output": "dist"
   },
@@ -18,7 +19,8 @@
   ],
   "win": {
     "target": "nsis",
-    "icon": "public/icon.ico"
+    "icon": "public/icon.png",
+    "requestedExecutionLevel": "asInvoker"
   },
   "nsis": {
     "oneClick": false,
