@@ -17,7 +17,8 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false
     },
     icon: path.join(__dirname, '../../public/icon.png'),
     titleBarStyle: 'default',
@@ -25,11 +26,14 @@ function createWindow() {
   });
 
   // Load the app
-  const startUrl = isDev 
-    ? 'http://localhost:3000' 
-    : `file://${path.join(__dirname, '../../build/index.html')}`;
-  
-  mainWindow.loadURL(startUrl);
+  if (isDev) {
+    mainWindow.loadURL('http://localhost:3000');
+  } else {
+    // In packaged apps, the build files are in the app.asar or __dirname
+    const indexPath = path.join(__dirname, 'index.html');
+    mainWindow.loadFile(indexPath);
+  }
+
 
   // Show window when ready
   mainWindow.once('ready-to-show', () => {
